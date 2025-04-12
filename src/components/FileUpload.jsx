@@ -17,7 +17,7 @@ export default function FileUpload() {
     formData.append("file", file);
     setLoading(true);
     try {
-      const res = await axios.post("https://your-backend-name.onrender.com/analyze/", formData);
+      const res = await axios.post("https://compliance-backend-6i89.onrender.com/analyze/", formData);
       setAnalysis(res.data.analysis);
     } catch (err) {
       setAnalysis("Error processing the file.");
