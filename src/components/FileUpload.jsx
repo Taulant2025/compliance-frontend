@@ -1,4 +1,3 @@
-// Redeploy test
 import React, { useState } from "react";
 import axios from "axios";
 import jsPDF from "jspdf";
@@ -14,16 +13,17 @@ export default function FileUpload() {
 
   const handleUpload = async () => {
     if (!file) return;
+
     const formData = new FormData();
     formData.append("file", file);
     setLoading(true);
+
     try {
       const res = await axios.post("https://compliance-backend-6i89.onrender.com/analyze", formData);
-      setAnalysis(res.data.analysis);
+      setAnalysis(res.data.analysis || res.data.error || "No analysis returned.");
     } catch (err) {
       console.error("Upload error:", err);
       setAnalysis("Error processing the file.");
-    }    
     } finally {
       setLoading(false);
     }
