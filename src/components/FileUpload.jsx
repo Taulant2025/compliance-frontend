@@ -13,14 +13,22 @@ export default function FileUpload() {
 
   const handleUpload = async () => {
     if (!file) return;
-
     const formData = new FormData();
     formData.append("file", file);
     setLoading(true);
 
     try {
-      const res = await axios.post("https://compliance-backend-6i89.onrender.com/analyze", formData);
-      setAnalysis(res.data.analysis || res.data.error || "No analysis returned.");
+      // Warm up backend in case Render service is cold
+      await axios.get("https://compliance-backend-6i89.onrender.com");
+
+      // Wait 1 second before making the actual request
+      await new Promise((res) => setTimeout(res, 1000));
+
+      const res = await axios.post(
+        "https://compliance-backend-6i89.onrender.com/analyze",
+        formData
+      );
+      setAnalysis(res.data.analysis);
     } catch (err) {
       console.error("Upload error:", err);
       setAnalysis("Error processing the file.");
@@ -42,7 +50,12 @@ export default function FileUpload() {
 
   return (
     <div className="w-full max-w-md">
-      <input type="file" accept=".pdf" onChange={handleFileChange} className="mb-4" />
+      <input
+        type="file"
+        accept=".pdf"
+        onChange={handleFileChange}
+        className="mb-4"
+      />
       <button
         onClick={handleUpload}
         className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
